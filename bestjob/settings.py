@@ -14,7 +14,7 @@ BOT_NAME = 'bestjob'
 SPIDER_MODULES = ['bestjob.spiders']
 NEWSPIDER_MODULE = 'bestjob.spiders'
 
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'ERROR'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

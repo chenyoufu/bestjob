@@ -9,6 +9,7 @@ import pymysql
 import maya
 import re
 
+
 from scrapy.exceptions import DropItem
 
 
@@ -16,11 +17,12 @@ class BestJobPipeline(object):
     def __init__(self):
         self.db = pymysql.connect(host='120.27.201.184', user='root', password='bestoffer', db='bestoffer', charset='utf8mb4')
         self.table = 't_job'
+        self.source = '51JOB'
         self.seen = self.ids_seen()
 
     def ids_seen(self):
         with self.db.cursor() as cursor:
-            sql = 'select position_id from %s' % self.table
+            sql = 'select position_id from %s WHERE source="%s"' % (self.table, self.source)
             cursor.execute(sql)
             cols = cursor.fetchall()
         return [x[0] for x in cols]
@@ -31,6 +33,10 @@ class BestJobPipeline(object):
         unit = salary.split('/')[0][-1] == u'千' and 1.0 or 10.0
         if salary.split('/')[1][0] == u'年':
             unit /= 12
+        elif salary.split('/')[1][0] == u'月':
+            unit /= 1
+        else:
+            return 0, 0, 0, 0
         salaries = re.findall('\d+\.?\d*', salary)
         if len(salaries) == 1:
             s_min = int(float(salaries[0]) * unit)
@@ -63,6 +69,8 @@ class BestJobPipeline(object):
         if item['city'].split('-')[0] != u'无锡':
             raise DropItem("Error item found: %s" % item)
         item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = self.expand_salary(item['salary'])
+        if item['salary'] == 0:
+            raise DropItem("Error item found: %s" % item)
         item['work_year_max'], item['work_year_min'] = self.expand_work_year(item['work_year'])
         item['create_time'] = self.parse_create_time(item['create_time'])
         try:
