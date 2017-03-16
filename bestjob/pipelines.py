@@ -27,6 +27,16 @@ class BestJobPipeline(object):
             cols = cursor.fetchall()
         return [x[0] for x in cols]
 
+    def expand_zl_salary(self, salary):
+        s = salary.split('-')
+        if len(s) != 2:
+            return 0, 0, 0, 0
+        s_min = int(s[0]) / 1000
+        s_max = int(s[1]) / 1000
+        s_avg = (s_min + s_max) / 2
+        ss = "{0}k-{1}k".format(s_min, s_max)
+        return ss, s_min, s_max, s_avg
+
     def expand_salary(self, salary):
         if '/' not in salary:
             return 0, 0, 0, 0
@@ -64,15 +74,22 @@ class BestJobPipeline(object):
         return t
 
     def process_item(self, item, spider):
-        if int(item['position_id']) in self.ids_seen():
+        try:
+            if int(item['position_id']) in self.ids_seen():
+                raise DropItem("Duplicate item found: %s" % item)
+            if item['city'].split('-')[0] != u'无锡':
+                raise DropItem("Error item found: %s" % item)
+            if spider.name == 'zl':
+                item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = self.expand_zl_salary(item['salary'])
+            if spider.name == '51JOB':
+                item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = self.expand_salary(item['salary'])
+            if item['salary_min'] == 0 or item['salary_min'] >= 50:
+                raise DropItem("Error item found: %s" % item)
+            item['work_year_max'], item['work_year_min'] = self.expand_work_year(item['work_year'])
+            item['create_time'] = self.parse_create_time(item['create_time'])
+        except ValueError:
             raise DropItem("Duplicate item found: %s" % item)
-        if item['city'].split('-')[0] != u'无锡':
-            raise DropItem("Error item found: %s" % item)
-        item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = self.expand_salary(item['salary'])
-        if item['salary'] == 0:
-            raise DropItem("Error item found: %s" % item)
-        item['work_year_max'], item['work_year_min'] = self.expand_work_year(item['work_year'])
-        item['create_time'] = self.parse_create_time(item['create_time'])
+
         try:
             with self.db.cursor() as cursor:
                 # Create a new record
@@ -88,3 +105,4 @@ class BestJobPipeline(object):
         except:
             self.db.rollback()
         return item
+

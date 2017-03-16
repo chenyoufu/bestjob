@@ -18,8 +18,7 @@ class Job51Spider(scrapy.Spider):
             if not div.find("a"):
                 continue
             item = BestJobItem()
-            item['company_id'] = \
-            div.find("span", attrs={"class": "t2"}).find("a").attrs['href'].strip().split('/')[-1].split('.')[0][2:]
+            item['company_id'] = div.find("span", attrs={"class": "t2"}).find("a").attrs['href'].split('/')[-1].split('.')[0][2:]
             item['company_name'] = div.find("span", attrs={"class": "t2"}).find("a").attrs['title'].strip()
             item['url'] = div.find("a").attrs['href'].strip()
             item['position_id'] = item['url'].split('/')[-1].split('.')[0]
