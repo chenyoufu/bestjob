@@ -23,13 +23,10 @@ class ZlSpider(scrapy.Spider):
             item['url'] = table.find("a").attrs['href'].strip()
             item['position_id'] = item['url'].split('/')[-1].split('.')[0]
             item['position_name'] = table.find("a").text.strip()
-            item['company_size'] = 0
             item['city'] = table.find("td", attrs={"class": "gzdd"}).text.strip()
             item['salary'] = table.find("td", attrs={"class": "zwyx"}).text.strip()
-            item['work_year'] = 0
-            item['education'] = 0
             item['create_time'] = table.find("td", attrs={"class": "gxsj"}).find("span").text.strip()
-            item['source'] = u"智联"
+            item['source'] = u"智联招聘"
             yield item
         try:
             np = soup.find("div", attrs={"class": "pagesDown"}).find("a", attrs={"class": "next-page"}).attrs['href']

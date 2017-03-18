@@ -12,7 +12,6 @@ class BestJobItem(scrapy.Item):
 
     company_id = scrapy.Field()
     company_name = scrapy.Field()
-    company_size = scrapy.Field()
 
     position_id = scrapy.Field()
     position_name = scrapy.Field()
@@ -23,11 +22,6 @@ class BestJobItem(scrapy.Item):
     salary_min = scrapy.Field()
     salary_max = scrapy.Field()
     salary_avg = scrapy.Field()
-
-    work_year = scrapy.Field()
-    work_year_min = scrapy.Field()
-    work_year_max = scrapy.Field()
-    education = scrapy.Field()
 
     city = scrapy.Field()
     url = scrapy.Field()
