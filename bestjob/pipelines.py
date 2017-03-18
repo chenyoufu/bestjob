@@ -34,6 +34,16 @@ def parse_zl_salary(salary):
     return ss, s_min, s_max, s_avg
 
 
+def parse_lg_salary(salary):
+    s = re.findall('\d+', salary)
+    if len(s) != 2:
+        return 0, 0, 0, 0
+    s_min = int(s[0])
+    s_max = int(s[1])
+    s_avg = (s_min + s_max) / 2
+    return salary, s_min, s_max, s_avg
+
+
 def parse_51_salary(salary):
     if '/' not in salary:
         return 0, 0, 0, 0
@@ -79,10 +89,14 @@ class BestJobPipeline(object):
             if item['city'].split('-')[0] != u'无锡':
                 raise DropItem("Error item found: %s" % item)
 
-            if spider.name == 'zl':
+            if spider.name == 'lg':
+                item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = parse_lg_salary(item['salary'])
+            elif spider.name == 'zl':
                 item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = parse_zl_salary(item['salary'])
-            if spider.name == '51job':
+            elif spider.name == '51job':
                 item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = parse_51_salary(item['salary'])
+            else:
+                raise DropItem("Error item salary found: %s" % item)
             if item['salary_min'] == 0 or item['salary_min'] >= 50:
                 raise DropItem("Error item found: %s" % item)
 
