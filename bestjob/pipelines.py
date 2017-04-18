@@ -71,7 +71,7 @@ def parse_51_salary(salary):
 
 class BestJobPipeline(object):
     def __init__(self):
-        self.db = pymysql.connect(host='127.0.0.1', user='root', password='xxxxxx', db='bestjob', charset='utf8')
+        self.db = pymysql.connect(host='101.37.79.201', user='root', password='xxxxx', db='bestjob', charset='utf8')
         self.table = 'jobs'
         self.seen = self.ids_seen()
 
@@ -86,9 +86,6 @@ class BestJobPipeline(object):
         try:
             if int(item['position_id']) in self.ids_seen():
                 raise DropItem("Duplicate item found: %s" % item)
-            if item['city'].split('-')[0] != u'无锡':
-                raise DropItem("Error item found: %s" % item)
-
             if spider.name == 'lg':
                 item['salary'], item['salary_min'], item['salary_max'], item['salary_avg'] = parse_lg_salary(item['salary'])
             elif spider.name == 'zl':
