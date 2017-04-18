@@ -71,7 +71,7 @@ def parse_51_salary(salary):
 
 class BestJobPipeline(object):
     def __init__(self):
-        self.db = pymysql.connect(host='101.37.79.201', user='root', password='xxxxx', db='bestjob', charset='utf8')
+        self.db = pymysql.connect(host='127.0.0.1', user='root', password='666offer', db='bestjob', charset='utf8')
         self.table = 'jobs'
         self.seen = self.ids_seen()
 

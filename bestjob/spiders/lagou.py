@@ -17,9 +17,9 @@ class LgSpider(scrapy.Spider):
     seeds = {
         'wuxi': 'https://www.lagou.com/gongsi/84-0-0.json',
         'suzhou': 'https://www.lagou.com/gongsi/80-0-0.json',
-        'shanghai': 'https://www.lagou.com/gongsi/3-0-0',
-        'hangzhou': 'https://www.lagou.com/gongsi/6-0-0',
-        'nanjing': 'https://www.lagou.com/gongsi/79-0-0',
+        'shanghai': 'https://www.lagou.com/gongsi/3-0-0.json',
+        'hangzhou': 'https://www.lagou.com/gongsi/6-0-0.json',
+        'nanjing': 'https://www.lagou.com/gongsi/79-0-0.json',
     }
 
     def __init__(self, city=None, *args, **kwargs):
